@@ -6,6 +6,7 @@ import time
 
 import numpy as np
 
+from . import llm
 from .catalog import Catalog, public
 from .config import BINDINGS_PATH, CATALOG_PATH, MODEL_DIR
 from .ml.embed import default_embedder
@@ -135,10 +136,22 @@ class Index:
         p["_rooms"] = b.get("rooms") if b and b.get("rooms") else suitable_rooms(p["_attrs"], p["_wt"])
 
     def ingest(self, products: list[dict]) -> list[dict]:
-        """Загрузка новых товаров: добавление в каталог и автоматическая разметка без ручной работы."""
+        """Загрузка новых товаров: добавление в каталог и автоматическая разметка без ручной работы.
+        Неоднозначные товары (вероятность у порога) уточняет локальная LLM, если она доступна."""
+        from .ml import llm_refine
         with self.lock:
             added = [self.catalog.add(p) for p in products]
             self.annotate(added)
+            if llm.available():
+                for p in added:
+                    P_row = np.array([p["_ml"]["proba"].get(c, 0.0) for c in self.classes])
+                    if llm_refine.is_uncertain(P_row, self.matcher.thresholds):
+                        refined = llm_refine.refine(p, P_row, self.classes)
+                        if refined is not None:
+                            p["_ml"]["llm"] = refined
+                            p["_ml"]["work_types"] = refined
+                            self._apply_binding(p)
+                self._reindex()
         return [self.describe(p) for p in added]
 
     def bind(self, pid: int, work_types: list[str] | None, kind: str | None, rooms: list[str] | None):

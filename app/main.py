@@ -15,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from . import llm, nlp, rag
+from .ml import llm_refine
 from .calc.estimate import choose, estimate, money, product_brief
 from .calc.formulas import BASIS, compute
 from .catalog import public
@@ -265,6 +266,11 @@ def admin_suggest(product: dict = Body(..., examples=[{"name": "Клей для 
     Yp, P, kinds, kconf, E = idx.predict([p])
     order = P[0].argsort()[::-1]
     wts = [idx.classes[c] for c in range(len(idx.classes)) if Yp[0, c]]
+    llm_used = None
+    if llm_refine.is_uncertain(P[0], idx.matcher.thresholds):  # неоднозначный товар -> локальная LLM, если есть
+        refined = llm_refine.refine(p, P[0], idx.classes)
+        if refined is not None:
+            llm_used, wts = {"model": wts, "llm": refined}, refined
     p["_emb"] = None if E is None else E[0]
     return {
         "work_types": [{"id": w, "name": work_type_name(w), "proba": round(float(P[0, idx.classes.index(w)]), 3)} for w in wts],
@@ -272,7 +278,8 @@ def admin_suggest(product: dict = Body(..., examples=[{"name": "Клей для 
                  "threshold": float(idx.matcher.thresholds[c])} for c in order[:6]],
         "kind": kinds[0], "kind_conf": round(float(kconf[0]), 3),
         "rooms": [{"id": r, "name": taxonomy_rooms()[r]["name"]} for r in suitable_rooms(p["_attrs"], wts)],
-        "attributes": p["_attrs"], "similar": idx.similar(p), "llm_used": False,
+        "attributes": p["_attrs"], "similar": idx.similar(p), "llm_used": llm_used,
+        "uncertain": llm_refine.is_uncertain(P[0], idx.matcher.thresholds),
     }
 
 

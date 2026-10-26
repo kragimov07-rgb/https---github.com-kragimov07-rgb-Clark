@@ -18,7 +18,7 @@ from scipy import sparse
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import KFold
+from sklearn.model_selection import GroupKFold, KFold
 from sklearn.multiclass import OneVsRestClassifier
 
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn.multiclass")
@@ -45,13 +45,14 @@ def zs_features(Z):
 
 class WorkTypeMatcher:
     def __init__(self, classes, mode="hybrid", knn_k=10, w_knn=0.25, w_zs=0.35, fallback=0.3,
-                 tune_thresholds=True):
+                 tune_thresholds=True, group_tuning=False):
         assert mode in ("baseline", "hybrid")
         self.classes = list(classes)
         self.mode = mode
         self.knn_k, self.w_knn, self.w_zs = knn_k, w_knn, w_zs
         self.fallback = fallback  # если ни один вид работ не прошёл порог — берём лучший при P >= fallback
         self.tune_thresholds = tune_thresholds
+        self.group_tuning = group_tuning
         self.thresholds = np.full(len(classes), 0.5)
 
     def _params(self):
@@ -118,7 +119,9 @@ class WorkTypeMatcher:
             out[s:s + batch] = votes / np.maximum(w.sum(1, keepdims=True), 1e-9)
         return out
 
-    def fit(self, texts, Y, E=None, Z=None, kinds=None, max_negatives=20000, seed=0):
+    def fit(self, texts, Y, E=None, Z=None, kinds=None, max_negatives=20000, seed=0, groups=None):
+        """groups (например, категории каталога): пороги подбираются на out-of-fold по группам —
+        настроены на обобщение на новые категории, а не на запоминание знакомых."""
         Y = np.asarray(Y, dtype=int)
         if self.mode == "baseline":
             E = Z = None
@@ -132,8 +135,9 @@ class WorkTypeMatcher:
             E = None if E is None else E[keep]
             Z = None if Z is None else Z[keep]
             kinds = None if kinds is None else [kinds[i] for i in keep]
+            groups = None if groups is None else [groups[i] for i in keep]
         if self.tune_thresholds:
-            self._tune(texts, Y, E, Z)
+            self._tune(texts, Y, E, Z, groups if self.group_tuning else None)
         self._fit_core(texts, Y, E, Z)
         if kinds is not None:
             pos = np.where(Y.sum(1) > 0)[0]  # класс материала нужен только ремонтным товарам
@@ -143,14 +147,17 @@ class WorkTypeMatcher:
                                                 n_jobs=N_JOBS).fit(Xk, [kinds[i] for i in pos])
         return self
 
-    def _tune(self, texts, Y, E, Z):
-        """Подбор порога по каждому виду работ на out-of-fold предсказаниях (3 фолда)."""
+    def _tune(self, texts, Y, E, Z, groups=None):
+        """Подбор порога по каждому виду работ на out-of-fold предсказаниях (3 фолда; по группам, если заданы)."""
         sub = lambda A, idx: None if A is None else A[idx]  # noqa: E731
         if len(texts) > 30000:  # подбор порогов на подвыборке — быстрее и достаточно для 26 порогов
             s = np.sort(np.random.default_rng(1).choice(len(texts), 30000, replace=False))
             texts, Y, E, Z = [texts[i] for i in s], Y[s], sub(E, s), sub(Z, s)
+            groups = None if groups is None else [groups[i] for i in s]
         oof = np.zeros(Y.shape, dtype=float)
-        for tr, va in KFold(3, shuffle=True, random_state=0).split(texts):
+        splitter = GroupKFold(3).split(texts, groups=groups) if groups is not None else \
+            KFold(3, shuffle=True, random_state=0).split(texts)
+        for tr, va in splitter:
             m = WorkTypeMatcher(self.classes, self.mode, tune_thresholds=False, **self._params())
             m._fit_core([texts[i] for i in tr], Y[tr], sub(E, tr), sub(Z, tr))
             oof[va] = m._proba_core([texts[i] for i in va], sub(E, va), sub(Z, va))

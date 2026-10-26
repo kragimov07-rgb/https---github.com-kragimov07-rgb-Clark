@@ -1,4 +1,9 @@
 .venv
 **/__pycache__
 .pytest_cache
+.git
 tests
+# сырые данные организаторов не нужны в образе: собранный каталог лежит в data/real/products.json
+data/real/raw
+data/real/review_sample.csv
+docs/img

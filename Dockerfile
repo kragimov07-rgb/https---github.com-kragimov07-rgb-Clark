@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 COPY . .
 # Модель эмбеддингов кладётся в образ заранее (make model) — в закрытом контуре интернета нет
 RUN test -d models/hf || (echo "models/hf отсутствует: выполните 'make model' перед сборкой" && exit 1)
+RUN mkdir -p /app/state
 EXPOSE 8000
 HEALTHCHECK CMD python -c "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

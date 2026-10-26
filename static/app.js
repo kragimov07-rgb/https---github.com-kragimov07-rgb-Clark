@@ -205,7 +205,7 @@ $("#sRand").onclick = async () => {
 };
 $("#sBtn").onclick = async () => {
   const r = await api("/api/v1/admin/suggest", { name: $("#sName").value, description: $("#sDesc").value, category: $("#sCat").value });
-  $("#sOut").innerHTML = `<h3>ML предлагает</h3>
+  $("#sOut").innerHTML = `<h3>ML предлагает${r.llm_used ? ' <span class="chip ml">уточнено локальной LLM</span>' : r.uncertain ? ' <span class="chip manual">неоднозначный товар</span>' : ""}</h3>
     <div>${r.work_types.map(w => `<span class="chip ml">${esc(w.name)} ${(w.proba * 100).toFixed(0)}%</span>`).join("") || '<span class="muted">не относится к ремонту</span>'}</div>
     <div class="muted" style="margin:6px 0">Класс материала: <b>${esc(r.kind)}</b> (${(r.kind_conf * 100).toFixed(0)}%) · Помещения: ${r.rooms.map(x => esc(x.name)).join(", ")}</div>
     <h3>Топ вероятностей (порог по виду работ)</h3>
