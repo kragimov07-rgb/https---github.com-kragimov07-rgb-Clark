@@ -1,0 +1,26 @@
+# Развёртывание в закрытом контуре: сервис + локальная LLM (Ollama) на GPU (RTX 3090 24 ГБ).
+services:
+  repaircalc:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      RC_OLLAMA_URL: http://ollama:11434
+      RC_OLLAMA_MODEL: qwen2.5:7b-instruct   # на 24 ГБ также помещается qwen2.5:14b-instruct
+      RC_LLM: auto
+    volumes:
+      - ./data/bindings.json:/app/data/bindings.json   # ручные привязки из админки переживают перезапуск
+    depends_on: [ollama]
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:0.5.4
+    volumes: ["ollama:/root/.ollama"]
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, count: 1, capabilities: [gpu]}]
+    restart: unless-stopped
+    # однократно: docker compose exec ollama ollama pull qwen2.5:7b-instruct
+
+volumes:
+  ollama:

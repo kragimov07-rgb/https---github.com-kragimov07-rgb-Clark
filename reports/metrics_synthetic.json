@@ -1,0 +1,757 @@
+{
+ "dataset": {
+  "products": 1140,
+  "new_products": 155,
+  "work_types": 26,
+  "subtypes": 124,
+  "multi_label_products": 265,
+  "out_of_scope_products": 82,
+  "avg_labels": 1.372
+ },
+ "classes": [
+  "demolition",
+  "priming",
+  "screed",
+  "self_leveling",
+  "plastering",
+  "drywall",
+  "puttying",
+  "waterproofing",
+  "insulation",
+  "electrical_wiring",
+  "electrical_fittings",
+  "plumbing",
+  "heating",
+  "ventilation",
+  "tiling",
+  "painting",
+  "wallpapering",
+  "decorative_finish",
+  "laminate",
+  "soft_flooring",
+  "ceiling",
+  "wall_panels",
+  "doors",
+  "windows_slopes",
+  "skirting",
+  "sealing"
+ ],
+ "results": {
+  "baseline": {
+   "random_5fold": {
+    "micro_f1": 0.991,
+    "macro_f1": 0.9907,
+    "samples_f1": 0.9918,
+    "exact_match": 0.9842,
+    "out_of_scope_correct": 0.9878,
+    "multi_label_micro_f1": 0.9869,
+    "ndcg@10": 1.0,
+    "map": 0.9991,
+    "kind_accuracy": 0.9965,
+    "per_class_f1": [
+     1.0,
+     1.0,
+     0.96,
+     0.923,
+     0.99,
+     0.993,
+     0.971,
+     1.0,
+     1.0,
+     0.992,
+     1.0,
+     1.0,
+     0.986,
+     1.0,
+     0.994,
+     0.989,
+     1.0,
+     0.986,
+     0.993,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.98,
+     1.0,
+     1.0
+    ],
+    "support": [
+     24,
+     48,
+     61,
+     33,
+     102,
+     76,
+     70,
+     28,
+     29,
+     60,
+     52,
+     72,
+     36,
+     14,
+     173,
+     141,
+     105,
+     70,
+     77,
+     28,
+     46,
+     59,
+     48,
+     24,
+     56,
+     32
+    ]
+   },
+   "group_5fold_unseen_subtypes": {
+    "micro_f1": 0.5189,
+    "macro_f1": 0.3995,
+    "samples_f1": 0.5673,
+    "exact_match": 0.4605,
+    "out_of_scope_correct": 0.939,
+    "multi_label_micro_f1": 0.3417,
+    "ndcg@10": 0.5166,
+    "map": 0.4665,
+    "kind_accuracy": 0.5368,
+    "per_class_f1": [
+     0.0,
+     0.261,
+     0.312,
+     0.0,
+     0.33,
+     0.652,
+     0.02,
+     0.133,
+     0.381,
+     0.594,
+     0.8,
+     0.763,
+     0.615,
+     0.0,
+     0.685,
+     0.733,
+     0.86,
+     0.0,
+     0.735,
+     0.0,
+     0.358,
+     0.484,
+     0.0,
+     0.304,
+     0.577,
+     0.788
+    ],
+    "support": [
+     24,
+     48,
+     61,
+     33,
+     102,
+     76,
+     70,
+     28,
+     29,
+     60,
+     52,
+     72,
+     36,
+     14,
+     173,
+     141,
+     105,
+     70,
+     77,
+     28,
+     46,
+     59,
+     48,
+     24,
+     56,
+     32
+    ]
+   },
+   "new_products": {
+    "micro_f1": 1.0,
+    "macro_f1": 1.0,
+    "samples_f1": 1.0,
+    "exact_match": 1.0,
+    "out_of_scope_correct": 1.0,
+    "multi_label_micro_f1": 1.0,
+    "ndcg@10": 1.0,
+    "map": 1.0,
+    "kind_accuracy": 1.0,
+    "per_class_f1": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "support": [
+     4,
+     6,
+     10,
+     6,
+     14,
+     10,
+     10,
+     4,
+     4,
+     8,
+     7,
+     10,
+     5,
+     2,
+     22,
+     19,
+     14,
+     9,
+     11,
+     4,
+     6,
+     8,
+     6,
+     3,
+     8,
+     4
+    ]
+   },
+   "timing": {
+    "train_s": 0.75,
+    "predict_ms_per_product": 0.043
+   }
+  },
+  "hybrid": {
+   "random_5fold": {
+    "micro_f1": 0.9696,
+    "macro_f1": 0.9688,
+    "samples_f1": 0.9797,
+    "exact_match": 0.9456,
+    "out_of_scope_correct": 0.9512,
+    "multi_label_micro_f1": 0.9563,
+    "ndcg@10": 1.0,
+    "map": 0.9945,
+    "kind_accuracy": 0.9991,
+    "per_class_f1": [
+     0.889,
+     0.98,
+     0.889,
+     0.857,
+     0.935,
+     0.922,
+     0.942,
+     0.982,
+     1.0,
+     1.0,
+     1.0,
+     0.986,
+     1.0,
+     1.0,
+     0.977,
+     0.986,
+     1.0,
+     0.971,
+     0.987,
+     0.982,
+     0.957,
+     0.983,
+     0.989,
+     1.0,
+     0.974,
+     1.0
+    ],
+    "support": [
+     24,
+     48,
+     61,
+     33,
+     102,
+     76,
+     70,
+     28,
+     29,
+     60,
+     52,
+     72,
+     36,
+     14,
+     173,
+     141,
+     105,
+     70,
+     77,
+     28,
+     46,
+     59,
+     48,
+     24,
+     56,
+     32
+    ]
+   },
+   "group_5fold_unseen_subtypes": {
+    "micro_f1": 0.6756,
+    "macro_f1": 0.6202,
+    "samples_f1": 0.7494,
+    "exact_match": 0.5807,
+    "out_of_scope_correct": 0.7195,
+    "multi_label_micro_f1": 0.4538,
+    "ndcg@10": 0.8117,
+    "map": 0.6943,
+    "kind_accuracy": 0.5553,
+    "per_class_f1": [
+     0.343,
+     0.738,
+     0.414,
+     0.297,
+     0.663,
+     0.75,
+     0.308,
+     0.926,
+     0.815,
+     0.693,
+     0.925,
+     0.794,
+     0.836,
+     0.0,
+     0.869,
+     0.734,
+     0.86,
+     0.298,
+     0.772,
+     0.964,
+     0.593,
+     0.549,
+     0.494,
+     0.0,
+     0.602,
+     0.889
+    ],
+    "support": [
+     24,
+     48,
+     61,
+     33,
+     102,
+     76,
+     70,
+     28,
+     29,
+     60,
+     52,
+     72,
+     36,
+     14,
+     173,
+     141,
+     105,
+     70,
+     77,
+     28,
+     46,
+     59,
+     48,
+     24,
+     56,
+     32
+    ]
+   },
+   "new_products": {
+    "micro_f1": 0.9883,
+    "macro_f1": 0.9837,
+    "samples_f1": 0.9893,
+    "exact_match": 0.9742,
+    "out_of_scope_correct": 1.0,
+    "multi_label_micro_f1": 0.986,
+    "ndcg@10": 0.9985,
+    "map": 0.9959,
+    "kind_accuracy": 1.0,
+    "per_class_f1": [
+     0.75,
+     1.0,
+     1.0,
+     0.909,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.977,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.941,
+     1.0
+    ],
+    "support": [
+     4,
+     6,
+     10,
+     6,
+     14,
+     10,
+     10,
+     4,
+     4,
+     8,
+     7,
+     10,
+     5,
+     2,
+     22,
+     19,
+     14,
+     9,
+     11,
+     4,
+     6,
+     8,
+     6,
+     3,
+     8,
+     4
+    ]
+   },
+   "timing": {
+    "train_s": 15.02,
+    "predict_ms_per_product": 0.356
+   }
+  }
+ },
+ "errors": {
+  "group": [
+   {
+    "id": 99975,
+    "subtype": "breaker",
+    "name": "Автоматический выключатель 1P C16 Электра-Т",
+    "gold": [
+     "electrical_wiring"
+    ],
+    "pred": [
+     "electrical_wiring",
+     "electrical_fittings"
+    ]
+   },
+   {
+    "id": 99648,
+    "subtype": "corner_plaster",
+    "name": "Уголок перфорированный алюминиевый 3 м FIXPRO",
+    "gold": [
+     "plastering",
+     "puttying"
+    ],
+    "pred": [
+     "screed"
+    ]
+   },
+   {
+    "id": 97108,
+    "subtype": "primer_deep",
+    "name": "Грунтовка универсальная ПрофОснова 10 л для внутренних работ",
+    "gold": [
+     "priming",
+     "plastering",
+     "puttying",
+     "tiling",
+     "painting",
+     "wallpapering"
+    ],
+    "pred": [
+     "priming"
+    ]
+   },
+   {
+    "id": 102127,
+    "subtype": "perforator",
+    "name": "Перфоратор Профи Инструмент 1050 Вт 3,2 Дж",
+    "gold": [
+     "demolition",
+     "electrical_wiring",
+     "plumbing"
+    ],
+    "pred": []
+   },
+   {
+    "id": 99429,
+    "subtype": "screw_wood",
+    "name": "Саморезы по дереву 3,5x35 Крепёж-Сервис 200 шт",
+    "gold": [
+     "wall_panels",
+     "doors",
+     "skirting"
+    ],
+    "pred": [
+     "drywall"
+    ]
+   },
+   {
+    "id": 99598,
+    "subtype": "damper",
+    "name": "Кромочная лента для стяжки Изовент 150 мм",
+    "gold": [
+     "screed",
+     "self_leveling"
+    ],
+    "pred": [
+     "screed",
+     "puttying",
+     "decorative_finish"
+    ]
+   },
+   {
+    "id": 96974,
+    "subtype": "screed_mix",
+    "name": "Пескобетон М300 Стройлайн 40 кг",
+    "gold": [
+     "screed"
+    ],
+    "pred": [
+     "screed",
+     "self_leveling"
+    ]
+   },
+   {
+    "id": 98401,
+    "subtype": "fiberglass_glue",
+    "name": "Клей для стеклообоев и стеклохолста готовый Ривьера Хоум 10 кг",
+    "gold": [
+     "painting",
+     "wallpapering"
+    ],
+    "pred": [
+     "wallpapering"
+    ]
+   },
+   {
+    "id": 102086,
+    "subtype": "level",
+    "name": "Уровень строительный Мастерок 200 см",
+    "gold": [
+     "screed",
+     "plastering",
+     "drywall",
+     "tiling",
+     "laminate",
+     "ceiling",
+     "wall_panels",
+     "doors"
+    ],
+    "pred": [
+     "screed"
+    ]
+   },
+   {
+    "id": 101885,
+    "subtype": "plaster_tools",
+    "name": "Правило трапеция Крепыш 1,5 м, арт. 98671",
+    "gold": [
+     "screed",
+     "plastering"
+    ],
+    "pred": [
+     "plastering",
+     "puttying"
+    ]
+   },
+   {
+    "id": 101919,
+    "subtype": "spatula",
+    "name": "Набор шпателей ToolMax 3 шт",
+    "gold": [
+     "plastering",
+     "puttying"
+    ],
+    "pred": [
+     "screed",
+     "plastering"
+    ]
+   },
+   {
+    "id": 100928,
+    "subtype": "vent_grille",
+    "name": "Воздуховод круглый 100 мм 1 м Volt Line",
+    "gold": [
+     "ventilation"
+    ],
+    "pred": []
+   },
+   {
+    "id": 97172,
+    "subtype": "betoncontact",
+    "name": "Грунтовка адгезионная Бетонконтакт Монолит-М 20 кг",
+    "gold": [
+     "priming",
+     "plastering",
+     "tiling"
+    ],
+    "pred": [
+     "priming",
+     "plastering",
+     "puttying",
+     "tiling",
+     "painting",
+     "wallpapering"
+    ]
+   },
+   {
+    "id": 97969,
+    "subtype": "cover_film",
+    "name": "Плёнка укрывная Профи Инструмент 4x5 м",
+    "gold": [
+     "demolition",
+     "painting",
+     "decorative_finish"
+    ],
+    "pred": [
+     "painting"
+    ]
+   },
+   {
+    "id": 100944,
+    "subtype": "ceiling_tile",
+    "name": "Плитка потолочная бесшовная Стукко Пьемонт 2 м²",
+    "gold": [
+     "ceiling"
+    ],
+    "pred": [
+     "decorative_finish",
+     "ceiling"
+    ]
+   },
+   {
+    "id": 96855,
+    "subtype": "putty_finish",
+    "name": "Шпаклёвка финишная полимерная Стройлайн 20 кг",
+    "gold": [
+     "puttying",
+     "painting"
+    ],
+    "pred": [
+     "self_leveling",
+     "puttying"
+    ]
+   },
+   {
+    "id": 97875,
+    "subtype": "tray",
+    "name": "Ванночка для краски Мастерок",
+    "gold": [
+     "priming",
+     "painting"
+    ],
+    "pred": [
+     "painting",
+     "decorative_finish"
+    ]
+   },
+   {
+    "id": 96378,
+    "subtype": "mosaic",
+    "name": "Мозаика стеклянная Azulejo Casa бежевый 30x30 см на сетке",
+    "gold": [
+     "tiling",
+     "decorative_finish"
+    ],
+    "pred": [
+     "tiling"
+    ]
+   },
+   {
+    "id": 101713,
+    "subtype": "acrylic_sealant",
+    "name": "Герметик акриловый Sealmaster белый 310 мл",
+    "gold": [
+     "windows_slopes",
+     "sealing"
+    ],
+    "pred": [
+     "plumbing",
+     "sealing"
+    ]
+   },
+   {
+    "id": 101222,
+    "subtype": "mount_glue",
+    "name": "Клей монтажный жидкие гвозди Пенофикс 400 г",
+    "gold": [
+     "decorative_finish",
+     "ceiling",
+     "wall_panels",
+     "skirting"
+    ],
+    "pred": [
+     "wall_panels",
+     "doors",
+     "sealing"
+    ]
+   }
+  ]
+ },
+ "ablation_group": {
+  "без kNN": {
+   "micro_f1": 0.6848,
+   "macro_f1": 0.6406,
+   "ndcg@10": 0.7897,
+   "map": 0.7037
+  },
+  "без zero-shot вероятности": {
+   "micro_f1": 0.5752,
+   "macro_f1": 0.4901,
+   "ndcg@10": 0.6301,
+   "map": 0.5593
+  },
+  "без fallback top-1": {
+   "micro_f1": 0.6756,
+   "macro_f1": 0.6202,
+   "ndcg@10": 0.8117,
+   "map": 0.6943
+  },
+  "только zero-shot+kNN, без логрегрессии": {
+   "micro_f1": 0.6576,
+   "macro_f1": 0.6445,
+   "ndcg@10": 0.9083,
+   "map": 0.7156
+  }
+ },
+ "resources": {
+  "embedding_model": "intfloat/multilingual-e5-small",
+  "embed_time_s_all_products": 0.33,
+  "peak_rss_mb": 931.8,
+  "total_eval_time_s": 371.9,
+  "hardware": "Apple M1 Pro, 16 GB RAM (MPS)"
+ }
+}

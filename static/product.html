@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пример карточки товара с виджетом RepairCalc</title>
+<style>
+  body { margin: 0; font: 15px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; color: #1d2330; }
+  .shop { background: #fff; border-bottom: 1px solid #e3e6ec; padding: 14px 24px; font-weight: 700; }
+  .shop small { font-weight: 400; color: #6b7385; margin-left: 8px; }
+  .wrap { max-width: 1000px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 420px; gap: 24px; }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } }
+  .box { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e3e6ec; }
+  .img { aspect-ratio: 4/3; background: repeating-linear-gradient(45deg, #eef0f4 0 12px, #f7f8fa 12px 24px); border-radius: 10px; display: grid; place-items: center; color: #9aa3b5; }
+  .price { font-size: 28px; font-weight: 700; margin: 8px 0; }
+  .buy { background: #e30613; color: #fff; border: 0; border-radius: 8px; padding: 12px 24px; font: inherit; font-weight: 600; width: 100%; margin-bottom: 16px; }
+  .note { font-size: 12px; color: #6b7385; margin-top: 16px; }
+  code { background: #eef0f4; padding: 2px 5px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="shop">Строительный маркетплейс <small>демо-страница товара (не реальный сайт)</small></div>
+<div class="wrap">
+  <div class="box"><div class="img">фото товара</div><h1 id="name" style="font-size:20px">…</h1><div id="chars"></div></div>
+  <div>
+    <div class="box"><div class="price" id="price">…</div><button class="buy">В корзину</button>
+      <div id="calc"></div>
+      <div class="note">Блок выше — виджет RepairCalc, встроенный двумя строками:<br>
+        <code>&lt;div data-repaircalc-product="ID"&gt;&lt;/div&gt;</code><br><code>&lt;script src="/ui/widget.js"&gt;&lt;/script&gt;</code></div>
+    </div>
+  </div>
+</div>
+<script>
+  const id = new URLSearchParams(location.search).get("id");
+  document.getElementById("calc").dataset.repaircalcProduct = id;
+  fetch(`/api/v1/product/${id}`).then(r => r.json()).then(d => {
+    const p = d.product;
+    document.getElementById("name").textContent = p.name;
+    document.getElementById("price").textContent = Number(p.result_price).toLocaleString("ru-RU") + " ₽ / " + p.unit;
+    document.getElementById("chars").innerHTML = (p.characteristics || []).map(c => `<div><span style="color:#6b7385">${c.name}:</span> ${c.value}</div>`).join("");
+  });
+</script>
+<script src="widget.js"></script>
+</body>
+</html>

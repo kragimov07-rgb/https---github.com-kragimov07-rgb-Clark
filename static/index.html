@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RepairCalc</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">RC</span> RepairCalc <small>умный калькулятор ремонта</small></div>
+  <nav id="tabs">
+    <button data-tab="calc" class="active">Смета</button>
+    <button data-tab="product">Карточка товара</button>
+    <button data-tab="admin">Админка</button>
+    <button data-tab="quality">Качество ML</button>
+  </nav>
+  <div id="health" class="health"></div>
+</header>
+
+<main>
+<!-- ============ СМЕТА ============ -->
+<section id="tab-calc" class="tab active">
+  <div class="grid2">
+    <div class="panel">
+      <h2>Параметры ремонта</h2>
+      <label class="field">Опишите словами
+        <div class="row"><input id="nl" placeholder="Квартира, капремонт: санузел 6 м², кухня 3 на 4"><button id="nlBtn" class="ghost">Разобрать</button></div>
+      </label>
+      <div class="row wrap">
+        <label class="field">Объект<select id="obj"><option value="apartment">Квартира</option><option value="studio">Студия</option><option value="house">Дом</option></select></label>
+        <label class="field">Ремонт<select id="rep"><option value="cosmetic">Косметический</option><option value="capital" selected>Капитальный</option><option value="designer">Дизайнерский</option></select></label>
+      </div>
+      <h3>Помещения</h3>
+      <div id="rooms"></div>
+      <div class="row"><button id="addRoom" class="ghost">+ помещение</button>
+        <label class="check"><input type="checkbox" id="explain" checked> пояснения (RAG)</label></div>
+      <button id="calcBtn" class="primary">Рассчитать смету</button>
+      <div class="demo-hint">Демо: <a href="#" id="demo1">квартира → капремонт → санузел 6 м², высокая влажность</a></div>
+    </div>
+    <div class="panel" id="result"><div class="empty">Задайте помещения и нажмите «Рассчитать смету»</div></div>
+  </div>
+</section>
+
+<!-- ============ КАРТОЧКА ============ -->
+<section id="tab-product" class="tab">
+  <div class="panel">
+    <h2>Расчёт на карточке товара</h2>
+    <div class="row"><input id="pq" placeholder="Поиск товара: плитка, ламинат, обои, краска…" value="плитка настенная"><button id="pqBtn">Найти</button></div>
+    <div id="plist" class="plist"></div>
+  </div>
+  <div id="pcard"></div>
+</section>
+
+<!-- ============ АДМИНКА ============ -->
+<section id="tab-admin" class="tab">
+  <div class="stats" id="stats"></div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Новый товар → ML-подсказка</h2>
+      <label class="field">Название<input id="sName" value="Клей для мозаики и стеклянной плитки белый 5 кг"></label>
+      <label class="field">Описание<textarea id="sDesc" rows="2">Для бассейнов, душевых и кухонных фартуков</textarea></label>
+      <button id="sBtn">Предложить категорию и помещения</button>
+      <div id="sOut"></div>
+    </div>
+    <div class="panel">
+      <h2>Загрузка каталога со стенда</h2>
+      <p class="muted">Обход дерева категорий → список товаров постранично → полные карточки → авторазметка.</p>
+      <label class="field">Адрес стенда<input id="standUrl" value=""></label>
+      <button id="syncBtn">Синхронизировать</button>
+      <div id="syncOut"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Привязка товаров к видам работ</h2>
+    <div class="row wrap">
+      <input id="aq" placeholder="поиск по названию">
+      <select id="awt"><option value="">все виды работ</option></select>
+      <select id="asrc"><option value="">ML и ручные</option><option value="ml">только ML</option><option value="manual">только ручные</option></select>
+      <label class="check"><input type="checkbox" id="alow"> низкая уверенность</label>
+      <button id="aBtn">Показать</button>
+    </div>
+    <div id="aList"></div>
+  </div>
+</section>
+
+<!-- ============ КАЧЕСТВО ============ -->
+<section id="tab-quality" class="tab"><div id="quality" class="panel"></div></section>
+</main>
+
+<template id="roomTpl">
+  <div class="room">
+    <select class="r-type">
+      <option value="living">Гостиная</option><option value="bedroom">Спальня</option><option value="kids">Детская</option>
+      <option value="kitchen">Кухня</option><option value="bathroom">Санузел</option><option value="toilet">Туалет</option>
+      <option value="hallway">Прихожая</option><option value="balcony">Балкон</option>
+    </select>
+    <input class="r-area" type="number" step="0.1" min="0" placeholder="м²">
+    <input class="r-len" type="number" step="0.1" min="0" placeholder="длина">
+    <input class="r-wid" type="number" step="0.1" min="0" placeholder="ширина">
+    <select class="r-hum"><option value="">влажность</option><option value="low">низкая</option><option value="medium">средняя</option><option value="high">высокая</option></select>
+    <select class="r-wall"><option value="">стены авто</option><option value="paint">покраска</option><option value="wallpaper">обои</option><option value="tile">плитка</option><option value="panels">панели</option></select>
+    <select class="r-floor"><option value="">пол авто</option><option value="laminate">ламинат</option><option value="spc">кварцвинил</option><option value="tile">плитка</option><option value="linoleum">линолеум</option></select>
+    <button class="r-del ghost" title="Удалить">✕</button>
+  </div>
+</template>
+<script src="app.js"></script>
+</body>
+</html>

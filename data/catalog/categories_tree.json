@@ -1,0 +1,1258 @@
+{
+ "data": [
+  {
+   "id": 2,
+   "parent_id": 1,
+   "name": "Плитка и керамогранит",
+   "url_key": "cat-2",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 72,
+   "children": [
+    {
+     "id": 3,
+     "parent_id": 2,
+     "name": "Настенная плитка",
+     "url_key": "cat-3",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    },
+    {
+     "id": 4,
+     "parent_id": 2,
+     "name": "Напольная плитка",
+     "url_key": "cat-4",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 16,
+     "product_count_all_children": 16,
+     "children": []
+    },
+    {
+     "id": 5,
+     "parent_id": 2,
+     "name": "Керамогранит",
+     "url_key": "cat-5",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 22,
+     "product_count_all_children": 22,
+     "children": []
+    },
+    {
+     "id": 6,
+     "parent_id": 2,
+     "name": "Мозаика",
+     "url_key": "cat-6",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "parent_id": 1,
+   "name": "Сухие смеси",
+   "url_key": "cat-7",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 116,
+   "children": [
+    {
+     "id": 8,
+     "parent_id": 7,
+     "name": "Плиточный клей",
+     "url_key": "cat-8",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 18,
+     "product_count_all_children": 18,
+     "children": []
+    },
+    {
+     "id": 9,
+     "parent_id": 7,
+     "name": "Затирки",
+     "url_key": "cat-9",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 20,
+     "product_count_all_children": 20,
+     "children": []
+    },
+    {
+     "id": 10,
+     "parent_id": 7,
+     "name": "Штукатурки",
+     "url_key": "cat-10",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    },
+    {
+     "id": 11,
+     "parent_id": 7,
+     "name": "Шпаклёвки",
+     "url_key": "cat-11",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 22,
+     "product_count_all_children": 22,
+     "children": []
+    },
+    {
+     "id": 12,
+     "parent_id": 7,
+     "name": "Смеси для пола",
+     "url_key": "cat-12",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    },
+    {
+     "id": 13,
+     "parent_id": 7,
+     "name": "Кладочные смеси",
+     "url_key": "cat-13",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "parent_id": 1,
+   "name": "Лакокрасочные материалы",
+   "url_key": "cat-14",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 108,
+   "children": [
+    {
+     "id": 15,
+     "parent_id": 14,
+     "name": "Грунтовки",
+     "url_key": "cat-15",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 32,
+     "product_count_all_children": 32,
+     "children": []
+    },
+    {
+     "id": 20,
+     "parent_id": 14,
+     "name": "Интерьерные краски",
+     "url_key": "cat-20",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 46,
+     "product_count_all_children": 46,
+     "children": []
+    },
+    {
+     "id": 21,
+     "parent_id": 14,
+     "name": "Фасадные краски",
+     "url_key": "cat-21",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 22,
+     "parent_id": 14,
+     "name": "Эмали",
+     "url_key": "cat-22",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 23,
+     "parent_id": 14,
+     "name": "Защита древесины",
+     "url_key": "cat-23",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 90,
+     "parent_id": 14,
+     "name": "Декоративные покрытия",
+     "url_key": "cat-90",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "parent_id": 1,
+   "name": "Гидроизоляция",
+   "url_key": "cat-16",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 28,
+   "children": [
+    {
+     "id": 17,
+     "parent_id": 16,
+     "name": "Обмазочная гидроизоляция",
+     "url_key": "cat-17",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 14,
+     "product_count_all_children": 14,
+     "children": []
+    },
+    {
+     "id": 18,
+     "parent_id": 16,
+     "name": "Ленты и манжеты",
+     "url_key": "cat-18",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 19,
+     "parent_id": 16,
+     "name": "Битумные мастики",
+     "url_key": "cat-19",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "parent_id": 1,
+   "name": "Инструменты",
+   "url_key": "cat-24",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 133,
+   "children": [
+    {
+     "id": 25,
+     "parent_id": 24,
+     "name": "Малярный инструмент",
+     "url_key": "cat-25",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 38,
+     "product_count_all_children": 38,
+     "children": []
+    },
+    {
+     "id": 33,
+     "parent_id": 24,
+     "name": "Обойный инструмент",
+     "url_key": "cat-33",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 100,
+     "parent_id": 24,
+     "name": "Пистолеты для пены и герметика",
+     "url_key": "cat-100",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 101,
+     "parent_id": 24,
+     "name": "Штукатурный и плиточный инструмент",
+     "url_key": "cat-101",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    },
+    {
+     "id": 102,
+     "parent_id": 24,
+     "name": "Плиточный инструмент",
+     "url_key": "cat-102",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 103,
+     "parent_id": 24,
+     "name": "Инструмент для пола",
+     "url_key": "cat-103",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 104,
+     "parent_id": 24,
+     "name": "Электроинструмент",
+     "url_key": "cat-104",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 14,
+     "product_count_all_children": 14,
+     "children": []
+    },
+    {
+     "id": 105,
+     "parent_id": 24,
+     "name": "Ёмкости",
+     "url_key": "cat-105",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 5,
+     "product_count_all_children": 5,
+     "children": []
+    },
+    {
+     "id": 106,
+     "parent_id": 24,
+     "name": "Измерительный инструмент",
+     "url_key": "cat-106",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 107,
+     "parent_id": 24,
+     "name": "Ручной инструмент",
+     "url_key": "cat-107",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 109,
+     "parent_id": 24,
+     "name": "Средства защиты",
+     "url_key": "cat-109",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "parent_id": 1,
+   "name": "Обои",
+   "url_key": "cat-26",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 81,
+   "children": [
+    {
+     "id": 27,
+     "parent_id": 26,
+     "name": "Стеклообои и малярный флизелин",
+     "url_key": "cat-27",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 28,
+     "parent_id": 26,
+     "name": "Флизелиновые обои",
+     "url_key": "cat-28",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    },
+    {
+     "id": 29,
+     "parent_id": 26,
+     "name": "Бумажные обои",
+     "url_key": "cat-29",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 30,
+     "parent_id": 26,
+     "name": "Виниловые обои",
+     "url_key": "cat-30",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 31,
+     "parent_id": 26,
+     "name": "Обои под покраску",
+     "url_key": "cat-31",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 32,
+     "parent_id": 26,
+     "name": "Клей для обоев",
+     "url_key": "cat-32",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 17,
+     "product_count_all_children": 17,
+     "children": []
+    },
+    {
+     "id": 108,
+     "parent_id": 26,
+     "name": "Средства для снятия обоев",
+     "url_key": "cat-108",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 4,
+     "product_count_all_children": 4,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "parent_id": 1,
+   "name": "Напольные покрытия",
+   "url_key": "cat-34",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 114,
+   "children": [
+    {
+     "id": 35,
+     "parent_id": 34,
+     "name": "Ламинат",
+     "url_key": "cat-35",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 26,
+     "product_count_all_children": 26,
+     "children": []
+    },
+    {
+     "id": 36,
+     "parent_id": 34,
+     "name": "Кварцвинил SPC",
+     "url_key": "cat-36",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 12,
+     "product_count_all_children": 12,
+     "children": []
+    },
+    {
+     "id": 37,
+     "parent_id": 34,
+     "name": "Паркетная доска",
+     "url_key": "cat-37",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 38,
+     "parent_id": 34,
+     "name": "Подложка",
+     "url_key": "cat-38",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 12,
+     "product_count_all_children": 12,
+     "children": []
+    },
+    {
+     "id": 39,
+     "parent_id": 34,
+     "name": "Линолеум",
+     "url_key": "cat-39",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 14,
+     "product_count_all_children": 14,
+     "children": []
+    },
+    {
+     "id": 40,
+     "parent_id": 34,
+     "name": "Ковролин",
+     "url_key": "cat-40",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 41,
+     "parent_id": 34,
+     "name": "Монтаж напольных покрытий",
+     "url_key": "cat-41",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 44,
+     "parent_id": 34,
+     "name": "Плинтусы и пороги",
+     "url_key": "cat-44",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 28,
+     "product_count_all_children": 28,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "parent_id": 1,
+   "name": "Товары для дома",
+   "url_key": "cat-42",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 22,
+   "children": [
+    {
+     "id": 43,
+     "parent_id": 42,
+     "name": "Ковры",
+     "url_key": "cat-43",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 112,
+     "parent_id": 42,
+     "name": "Хозяйственные товары",
+     "url_key": "cat-112",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 113,
+     "parent_id": 42,
+     "name": "Хранение",
+     "url_key": "cat-113",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 45,
+   "parent_id": 1,
+   "name": "Стройматериалы",
+   "url_key": "cat-45",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 98,
+   "children": [
+    {
+     "id": 46,
+     "parent_id": 45,
+     "name": "Гипсокартон",
+     "url_key": "cat-46",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 30,
+     "product_count_all_children": 30,
+     "children": []
+    },
+    {
+     "id": 47,
+     "parent_id": 45,
+     "name": "Профили для гипсокартона",
+     "url_key": "cat-47",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 16,
+     "product_count_all_children": 16,
+     "children": []
+    },
+    {
+     "id": 51,
+     "parent_id": 45,
+     "name": "Ленты и сетки",
+     "url_key": "cat-51",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 28,
+     "product_count_all_children": 28,
+     "children": []
+    },
+    {
+     "id": 52,
+     "parent_id": 45,
+     "name": "Утеплители",
+     "url_key": "cat-52",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 48,
+   "parent_id": 1,
+   "name": "Крепёж",
+   "url_key": "cat-48",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 27,
+   "children": [
+    {
+     "id": 49,
+     "parent_id": 48,
+     "name": "Саморезы",
+     "url_key": "cat-49",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 14,
+     "product_count_all_children": 14,
+     "children": []
+    },
+    {
+     "id": 50,
+     "parent_id": 48,
+     "name": "Дюбели",
+     "url_key": "cat-50",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 13,
+     "product_count_all_children": 13,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 53,
+   "parent_id": 1,
+   "name": "Электротовары",
+   "url_key": "cat-53",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 76,
+   "children": [
+    {
+     "id": 54,
+     "parent_id": 53,
+     "name": "Кабель и провод",
+     "url_key": "cat-54",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 12,
+     "product_count_all_children": 12,
+     "children": []
+    },
+    {
+     "id": 55,
+     "parent_id": 53,
+     "name": "Кабель-каналы и гофра",
+     "url_key": "cat-55",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 56,
+     "parent_id": 53,
+     "name": "Монтажные коробки",
+     "url_key": "cat-56",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 57,
+     "parent_id": 53,
+     "name": "Автоматы и щиты",
+     "url_key": "cat-57",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 58,
+     "parent_id": 53,
+     "name": "Клеммы и изоляция",
+     "url_key": "cat-58",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    },
+    {
+     "id": 59,
+     "parent_id": 53,
+     "name": "Розетки и выключатели",
+     "url_key": "cat-59",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 24,
+     "product_count_all_children": 24,
+     "children": []
+    },
+    {
+     "id": 64,
+     "parent_id": 53,
+     "name": "Удлинители",
+     "url_key": "cat-64",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "parent_id": 1,
+   "name": "Освещение",
+   "url_key": "cat-60",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 28,
+   "children": [
+    {
+     "id": 61,
+     "parent_id": 60,
+     "name": "Светильники",
+     "url_key": "cat-61",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 14,
+     "product_count_all_children": 14,
+     "children": []
+    },
+    {
+     "id": 62,
+     "parent_id": 60,
+     "name": "Лампы",
+     "url_key": "cat-62",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 63,
+     "parent_id": 60,
+     "name": "Светодиодные ленты",
+     "url_key": "cat-63",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 65,
+   "parent_id": 1,
+   "name": "Сантехника",
+   "url_key": "cat-65",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 54,
+   "children": [
+    {
+     "id": 66,
+     "parent_id": 65,
+     "name": "Трубы и фитинги",
+     "url_key": "cat-66",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 12,
+     "product_count_all_children": 12,
+     "children": []
+    },
+    {
+     "id": 67,
+     "parent_id": 65,
+     "name": "Канализация",
+     "url_key": "cat-67",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 68,
+     "parent_id": 65,
+     "name": "Смесители",
+     "url_key": "cat-68",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 12,
+     "product_count_all_children": 12,
+     "children": []
+    },
+    {
+     "id": 69,
+     "parent_id": 65,
+     "name": "Унитазы и инсталляции",
+     "url_key": "cat-69",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 70,
+     "parent_id": 65,
+     "name": "Раковины и ванны",
+     "url_key": "cat-70",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 71,
+     "parent_id": 65,
+     "name": "Полотенцесушители",
+     "url_key": "cat-71",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 72,
+   "parent_id": 1,
+   "name": "Сад и огород",
+   "url_key": "cat-72",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 24,
+   "children": [
+    {
+     "id": 73,
+     "parent_id": 72,
+     "name": "Полив",
+     "url_key": "cat-73",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 110,
+     "parent_id": 72,
+     "name": "Садовый инструмент",
+     "url_key": "cat-110",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 111,
+     "parent_id": 72,
+     "name": "Мангалы и грили",
+     "url_key": "cat-111",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 74,
+   "parent_id": 1,
+   "name": "Отопление",
+   "url_key": "cat-74",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 24,
+   "children": [
+    {
+     "id": 75,
+     "parent_id": 74,
+     "name": "Тёплые полы",
+     "url_key": "cat-75",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 16,
+     "product_count_all_children": 16,
+     "children": []
+    },
+    {
+     "id": 76,
+     "parent_id": 74,
+     "name": "Радиаторы",
+     "url_key": "cat-76",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 77,
+   "parent_id": 1,
+   "name": "Вентиляция",
+   "url_key": "cat-77",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 14,
+   "children": [
+    {
+     "id": 78,
+     "parent_id": 77,
+     "name": "Вытяжные вентиляторы",
+     "url_key": "cat-78",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 79,
+     "parent_id": 77,
+     "name": "Решётки и воздуховоды",
+     "url_key": "cat-79",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 6,
+     "product_count_all_children": 6,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 80,
+   "parent_id": 1,
+   "name": "Потолки",
+   "url_key": "cat-80",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 24,
+   "children": [
+    {
+     "id": 81,
+     "parent_id": 80,
+     "name": "Потолочная плитка",
+     "url_key": "cat-81",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 82,
+     "parent_id": 80,
+     "name": "Реечные и кассетные потолки",
+     "url_key": "cat-82",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 83,
+     "parent_id": 80,
+     "name": "Потолочный плинтус",
+     "url_key": "cat-83",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 84,
+   "parent_id": 1,
+   "name": "Стеновые панели",
+   "url_key": "cat-84",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 23,
+   "children": [
+    {
+     "id": 85,
+     "parent_id": 84,
+     "name": "Панели ПВХ",
+     "url_key": "cat-85",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 86,
+     "parent_id": 84,
+     "name": "Панели МДФ",
+     "url_key": "cat-86",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 87,
+     "parent_id": 84,
+     "name": "Комплектующие",
+     "url_key": "cat-87",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 5,
+     "product_count_all_children": 5,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 88,
+   "parent_id": 1,
+   "name": "Герметики и пены",
+   "url_key": "cat-88",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 34,
+   "children": [
+    {
+     "id": 89,
+     "parent_id": 88,
+     "name": "Монтажный клей",
+     "url_key": "cat-89",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    },
+    {
+     "id": 98,
+     "parent_id": 88,
+     "name": "Монтажная пена",
+     "url_key": "cat-98",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    },
+    {
+     "id": 99,
+     "parent_id": 88,
+     "name": "Герметики",
+     "url_key": "cat-99",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 16,
+     "product_count_all_children": 16,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 91,
+   "parent_id": 1,
+   "name": "Декор",
+   "url_key": "cat-91",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 8,
+   "children": [
+    {
+     "id": 92,
+     "parent_id": 91,
+     "name": "Молдинги и лепнина",
+     "url_key": "cat-92",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 93,
+   "parent_id": 1,
+   "name": "Двери",
+   "url_key": "cat-93",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 24,
+   "children": [
+    {
+     "id": 94,
+     "parent_id": 93,
+     "name": "Межкомнатные двери",
+     "url_key": "cat-94",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 14,
+     "product_count_all_children": 14,
+     "children": []
+    },
+    {
+     "id": 95,
+     "parent_id": 93,
+     "name": "Комплектующие для дверей",
+     "url_key": "cat-95",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 10,
+     "product_count_all_children": 10,
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": 96,
+   "parent_id": 1,
+   "name": "Окна",
+   "url_key": "cat-96",
+   "status": true,
+   "depth_level": 1,
+   "product_count": 0,
+   "product_count_all_children": 8,
+   "children": [
+    {
+     "id": 97,
+     "parent_id": 96,
+     "name": "Подоконники и откосы",
+     "url_key": "cat-97",
+     "status": true,
+     "depth_level": 2,
+     "product_count": 8,
+     "product_count_all_children": 8,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

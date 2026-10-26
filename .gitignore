@@ -1,0 +1,18 @@
+# окружение
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# модели и кэши (пересобираются: make model / make train)
+models/
+
+# данные организаторов и производные от них (пересобираются: python -m scripts.build_real_catalog)
+data/real/raw/
+data/real/products.json
+data/real/new_products.json
+data/catalog/real_products.json
+
+# ручные привязки из админки (состояние конкретного стенда)
+data/bindings*.json

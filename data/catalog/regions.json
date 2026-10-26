@@ -1,0 +1,24 @@
+{
+ "data": [
+  {
+   "id": 1,
+   "code": "spb",
+   "name": "Санкт-Петербург",
+   "oracle_cod_city": 1,
+   "priority": 0,
+   "status": true,
+   "is_default": true,
+   "warehouses_count": 2
+  },
+  {
+   "id": 2,
+   "code": "msk",
+   "name": "Москва",
+   "oracle_cod_city": 2,
+   "priority": 1,
+   "status": true,
+   "is_default": false,
+   "warehouses_count": 1
+  }
+ ]
+}
