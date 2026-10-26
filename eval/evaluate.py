@@ -94,7 +94,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--folds", type=int, default=5)
     ap.add_argument("--no-ablation", action="store_true")
+    ap.add_argument("--render", action="store_true", help="только пересобрать .md из готового .json")
     args = ap.parse_args()
+    if args.render:
+        r = json.loads((REPORTS / f"metrics_{DATASET}.json").read_text())
+        (REPORTS / f"metrics_{DATASET}.md").write_text(to_markdown(r))
+        return
     t_start = time.perf_counter()
     cat_path, gold_path, new_path, new_gold_path = default_sets()
     d = build(cat_path, gold_path)
@@ -177,13 +182,16 @@ def error_examples(d, Yp, P, n=20):
 
 def to_markdown(r):
     L = ["# Метрики ML-матчинга RepairCalc", "",
-         f"Каталог: **{r['dataset']['products']}** товаров, {r['dataset']['subtypes']} подтипов, "
+         f"Набор данных: **{r['dataset'].get('name', 'synthetic')}**. Каталог: **{r['dataset']['products']}** товаров, {r['dataset']['subtypes']} "
+         f"{'категорий' if r['dataset'].get('name') == 'real' else 'подтипов'}, "
          f"{r['dataset']['work_types']} видов работ; товаров с несколькими видами работ — "
          f"{r['dataset']['multi_label_products']}, вне ремонта — {r['dataset']['out_of_scope_products']}. "
          f"Новые товары для проверки: {r['dataset']['new_products']}.", "",
          "| Модель | Протокол | micro-F1 | macro-F1 | samples-F1 | nDCG@10 | MAP | вне ремонта | multi-label F1 | класс материала |",
          "|---|---|---|---|---|---|---|---|---|---|"]
-    names = {"random_5fold": "5-fold, случайное", "group_5fold_unseen_subtypes": "5-fold, новые подтипы",
+    grp = "незнакомые категории" if r["dataset"].get("name") == "real" else "новые подтипы"
+    k = r["dataset"].get("folds", 5)
+    names = {"random_5fold": f"{k}-fold, случайное", "group_5fold_unseen_subtypes": f"{k}-fold, {grp}",
              "new_products": "новые товары"}
     for mode, res in r["results"].items():
         for proto, m in res.items():
@@ -192,14 +200,14 @@ def to_markdown(r):
             L.append(f"| {mode} | {names[proto]} | **{m['micro_f1']:.3f}** | {m['macro_f1']:.3f} | {m['samples_f1']:.3f} | "
                      f"{m['ndcg@10']:.3f} | {m['map']:.3f} | {m.get('out_of_scope_correct', 0):.3f} | "
                      f"{m.get('multi_label_micro_f1', 0):.3f} | {m.get('kind_accuracy', 0):.3f} |")
-    if not r["ablation_group"]:
-        L += ["", "_Абляция не запускалась (--no-ablation)._"]
-    L += ["", "## Абляция гибридной модели (новые подтипы)", "", "| Вариант | micro-F1 | macro-F1 | nDCG@10 | MAP |", "|---|---|---|---|---|"]
-    g = r["results"]["hybrid"]["group_5fold_unseen_subtypes"]
-    L.append(f"| hybrid (полная) | {g['micro_f1']:.3f} | {g['macro_f1']:.3f} | {g['ndcg@10']:.3f} | {g['map']:.3f} |")
-    for k, v in r["ablation_group"].items():
-        L.append(f"| {k} | {v['micro_f1']:.3f} | {v['macro_f1']:.3f} | {v['ndcg@10']:.3f} | {v['map']:.3f} |")
-    L += ["", "## F1 по видам работ (hybrid)", "", "| Вид работ | support | F1 случайное | F1 новые подтипы | F1 новые товары |", "|---|---|---|---|---|"]
+    if r["ablation_group"]:
+        L += ["", f"## Абляция гибридной модели ({grp})", "", "| Вариант | micro-F1 | macro-F1 | nDCG@10 | MAP |",
+              "|---|---|---|---|---|"]
+        g = r["results"]["hybrid"]["group_5fold_unseen_subtypes"]
+        L.append(f"| hybrid (полная) | {g['micro_f1']:.3f} | {g['macro_f1']:.3f} | {g['ndcg@10']:.3f} | {g['map']:.3f} |")
+        for k, v in r["ablation_group"].items():
+            L.append(f"| {k} | {v['micro_f1']:.3f} | {v['macro_f1']:.3f} | {v['ndcg@10']:.3f} | {v['map']:.3f} |")
+    L += ["", "## F1 по видам работ (hybrid)", "", f"| Вид работ | support | F1 случайное | F1 {grp} | F1 новые товары |", "|---|---|---|---|---|"]
     h = r["results"]["hybrid"]
     for i, c in enumerate(r["classes"]):
         L.append(f"| {work_type_name(c)} | {h['random_5fold']['support'][i]} | {h['random_5fold']['per_class_f1'][i]:.2f} | "
@@ -211,7 +219,7 @@ def to_markdown(r):
     L += [f"- эмбеддинги ({rs['embedding_model']}) для всего каталога: {rs['embed_time_s_all_products']} с (с кэшем — мгновенно)",
           f"- пиковая память процесса оценки: {rs['peak_rss_mb']} МБ; железо: {rs['hardware']}",
           f"- полное время оценки: {rs['total_eval_time_s']} с", "",
-          "## Примеры ошибок (новые подтипы)", "", "| Товар | Эталон | Предсказание |", "|---|---|---|"]
+          f"## Примеры ошибок ({grp})", "", "| Товар | Эталон | Предсказание |", "|---|---|---|"]
     for e in r["errors"].get("group", []):
         L.append(f"| {e['name']} | {', '.join(e['gold']) or '—'} | {', '.join(e['pred']) or '—'} |")
     return "\n".join(L) + "\n"

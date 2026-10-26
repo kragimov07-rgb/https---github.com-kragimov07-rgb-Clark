@@ -16,3 +16,4 @@ data/catalog/real_products.json
 
 # ручные привязки из админки (состояние конкретного стенда)
 data/bindings*.json
+data/real/review_sample.csv

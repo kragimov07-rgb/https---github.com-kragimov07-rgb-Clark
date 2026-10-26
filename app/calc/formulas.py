@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 DEFAULTS = {
     "tile_waste": 0.10, "tile_waste_diagonal": 0.15, "tile_waste_small_room": 0.05,
     "tile_adhesive_kg_m2": 4.5, "grout_kg_m2": 0.5, "primer_l_m2": 0.15,
-    "paint_l_m2_layer": 0.12, "paint_layers": 2,
+    "paint_l_m2_layer": 0.12, "paint_layers": 2, "paint_density_kg_l": 1.4,
     "wallpaper_glue_m2_per_pack": 30, "wallpaper_strip_reserve_m": 0.1,
     "plaster_kg_m2_mm": 0.85, "plaster_mm": 15, "plaster_cement_kg_m2_mm": 1.5,
     "putty_kg_m2_mm": 1.0, "putty_start_mm": 3, "putty_finish_mm": 1,
@@ -143,8 +143,15 @@ def primer(area, a, p, ctx):
 def paint(area, a, p, ctx):
     c, n = consumption(a, "paint_l_m2_layer")
     layers = ctx.get("layers", DEFAULTS["paint_layers"])
-    need = _packs(area * c * layers, a.get("volume_l"), "л", "", n + [f"{layers} слоя"])
-    need.formula = f"{ru(area)} м² × {ru(c)} л/м² × {layers} сл. = {ru(area * c * layers)} л → {need.qty} шт"
+    liters = area * c * layers
+    if not a.get("volume_l") and a.get("weight_kg"):  # краска продаётся в кг: плотность в/д краски ≈ 1,4 кг/л
+        kg = liters * DEFAULTS["paint_density_kg_l"]
+        need = _packs(kg, a["weight_kg"], "кг", "", n + [f"{layers} слоя", "плотность краски 1,4 кг/л"])
+        need.formula = (f"{ru(area)} м² × {ru(c)} л/м² × {layers} сл. = {ru(liters)} л × 1,4 кг/л = {ru(kg)} кг "
+                        f"/ {ru(a['weight_kg'])} кг → {need.qty} шт")
+        return need
+    need = _packs(liters, a.get("volume_l"), "л", "", n + [f"{layers} слоя"])
+    need.formula = f"{ru(area)} м² × {ru(c)} л/м² × {layers} сл. = {ru(liters)} л → {need.qty} шт"
     return need
 
 
@@ -278,18 +285,28 @@ def fastener(area, a, p, ctx):
     return Need(q, f"{math.ceil(n)} шт", f"{ru(area)} м² × {ru(per_m2)} шт/м² = {math.ceil(n)} шт" + (f" / {int(pack)} в упаковке → {q}" if pack else ""))
 
 
+def _with_sheet_area(a, p, per_pack=False):
+    """Площадь упаковки из размеров листа (мм) × штук в упаковке, если в карточке нет готовой площади."""
+    if p.get("package_area") or not a.get("sheet_area_m2"):
+        return p
+    q = (a.get("pack_qty") or 1) if per_pack else 1
+    return {**p, "package_area": round(a["sheet_area_m2"] * q, 3)}
+
+
 def insulation_board(area, a, p, ctx):
-    return area_material(area, a, p, DEFAULTS["insulation_waste"], "запас 5%")
+    return area_material(area, a, _with_sheet_area(a, p, per_pack=True), DEFAULTS["insulation_waste"], "запас 5%")
 
 
 def panel(area, a, p, ctx):
-    return area_material(area, a, p, DEFAULTS["panel_waste"], "запас 10%")
+    unit = (p.get("unit") or "").replace(".", "")
+    return area_material(area, a, _with_sheet_area(a, p, per_pack=unit.startswith("уп")), DEFAULTS["panel_waste"],
+                         "запас 10%")
 
 
 def cable(points, a, p, ctx):
     m = points * DEFAULTS["cable_m_per_point"] + DEFAULTS["cable_reserve_m"]
     unit = (p.get("unit") or "").replace(".", "")
-    pack = a.get("cable_pack_m")
+    pack = a.get("cable_pack_m") or (a.get("length_m") if (a.get("length_m") or 0) >= 5 else None)
     if pack and not unit.startswith(("м", "пм")):  # продаётся бухтами
         q = math.ceil(m / pack - 1e-9)
         return Need(q, f"{round(m)} м", f"{int(points)} точек × 7 м + 10 м = {round(m)} м / бухта {ru(pack)} м → {q}")

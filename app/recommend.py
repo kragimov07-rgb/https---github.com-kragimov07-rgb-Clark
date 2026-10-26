@@ -7,8 +7,21 @@
    рейтинг, наличие на складах региона, соответствие ценового сегмента типу ремонта.
 """
 import math
+import re
 
 import numpy as np
+
+PACKED_KINDS = {"paint", "primer", "tile_adhesive", "grout", "plaster_mix", "putty", "screed_mix", "self_leveling_mix",
+                "waterproofing_mix", "decor_plaster"}
+AREA_KINDS = {"tile", "laminate", "underlay", "insulation_board", "wall_panel", "ceiling_panel"}
+
+
+def has_area(p: dict) -> bool:
+    a = p["_attrs"]
+    unit = (p.get("unit") or "").replace(".", "")
+    return bool(p.get("package_area") or unit.startswith(("м²", "квм")) or
+                (a.get("sheet_area_m2") and p.get("_kind") in ("wall_panel", "ceiling_panel", "insulation_board")))
+
 
 PRICE_TARGET = {"cosmetic": 0.25, "capital": 0.5, "designer": 0.85}
 
@@ -42,8 +55,16 @@ def stock_score(p: dict, region_id: int | None) -> float:
 
 
 def unit_price(p: dict) -> float:
-    """Цена за единицу площади, если она известна, иначе цена единицы продажи — для сравнения сегмента."""
-    return float(p.get("price_per_m2") or p.get("result_price") or 0)
+    """Цена за единицу материала (м², кг, л), иначе за единицу продажи — чтобы сравнивать
+    сегмент честно: мешок 25 кг не «дороже» банки 1,5 кг."""
+    price = float(p.get("result_price") or 0)
+    a = p.get("_attrs") or {}
+    if p.get("price_per_m2"):
+        return float(p["price_per_m2"])
+    for key in ("weight_kg", "volume_l"):
+        if a.get(key):
+            return price / a[key]
+    return price
 
 
 def rank(cands: list[dict], work_type: str, prefer: list[str], repair: str, region_id: int | None,
@@ -81,9 +102,23 @@ def rank(cands: list[dict], work_type: str, prefer: list[str], repair: str, regi
 
 
 def pick(index, work_type: str, kind: str, prefer: list[str], require: dict, repair: str, region_id: int | None,
-         room_prof: dict | None = None):
+         room_prof: dict | None = None, must: str | None = None, optional: bool = False):
     cands = index.candidates(work_type, kind)
     warnings = []
+    if must:
+        matched = [p for p in cands if re.search(must, p["name"].lower())]
+        if not matched and optional:
+            return [], []
+        if matched:
+            cands = matched
+        elif cands:
+            warnings.append("точного товара для позиции нет в каталоге — показан ближайший по виду работ")
+    if kind in AREA_KINDS:  # для расчёта по площади нужна известная фасовка
+        known = [p for p in cands if has_area(p)]
+        cands = known or cands
+    elif kind in PACKED_KINDS:  # для смесей и ЛКМ нужен известный вес или объём упаковки
+        known = [p for p in cands if p["_attrs"].get("weight_kg") or p["_attrs"].get("volume_l")]
+        cands = known or cands
     ok = [p for p in cands if meets(p, require)]
     if require and not ok and cands:
         warnings.append(f"нет товаров, удовлетворяющих требованиям {require} — показаны ближайшие альтернативы")

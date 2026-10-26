@@ -1,6 +1,7 @@
 """RepairCalc — микросервис умных калькуляторов ремонта (FastAPI, stateless, REST/JSON)."""
 import json
 import logging
+import re
 from contextlib import asynccontextmanager
 import time
 from decimal import Decimal
@@ -14,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from . import llm, nlp, rag
-from .calc.estimate import estimate, money, product_brief
+from .calc.estimate import choose, estimate, money, product_brief
 from .calc.formulas import BASIS, compute
 from .catalog import public
 from .config import DATASET, MODEL_DIR, ROOT
@@ -164,6 +165,12 @@ COMPANIONS = {
 }
 
 
+WALL_KINDS = {"wallpaper", "wallpaper_glue", "paint", "plaster_mix", "putty", "wall_panel", "decor_plaster"}
+COMPANION_MUST = {"primer": r"глубок|грунт", "tool": r"^валик", "skirting": r"^плинтус", "profile": r"^профиль (потолочн|направляющ|стоечн|пп|пн|пс)",
+                  "thermostat": r"^терморегулятор", "door_part": r"короб", "foam": r"пена", "grout": r"затирк",
+                  "tile_adhesive": r"клей", "wallpaper_glue": r"клей", "underlay": r"подложк"}
+
+
 @app.get("/api/v1/product/{pid}", tags=["product"])
 def product(pid: int):
     p = get_index().catalog.get(pid)
@@ -181,8 +188,13 @@ def product_calc(pid: int, req: ProductCalcIn):
         raise HTTPException(404, "товар не найден")
     kind = p["_kind"]
     perimeter = None
+    wall_product = kind in WALL_KINDS or (kind == "tile" and re.search(r"настен|для стен", p["name"].lower()))
+    height = req.wall_height or 2.7
     if req.area:
         area = req.area
+    elif req.length and req.width and wall_product:  # размеры комнаты -> площадь стен
+        perimeter = 2 * (req.length + req.width)
+        area = perimeter * height
     elif req.length and req.width:
         area, perimeter = req.length * req.width, 2 * (req.length + req.width)
     elif req.wall_width and req.wall_height:
@@ -191,8 +203,8 @@ def product_calc(pid: int, req: ProductCalcIn):
         area = None
     if area is not None:
         area = max(area - req.openings_area, 0)
-    ctx = {"diagonal": req.diagonal, "layers": req.layers, "height": req.wall_height or 2.7,
-           "wall_length": req.wall_width, "length": req.length, "width": req.width}
+    ctx = {"diagonal": req.diagonal, "layers": req.layers, "height": height,
+           "wall_length": req.wall_width or (perimeter if wall_product else None), "length": req.length, "width": req.width}
     basis_type = next((b for b, ks in BASIS.items() if kind in ks), "count")
     if basis_type == "area":
         if area is None:
@@ -215,13 +227,11 @@ def product_calc(pid: int, req: ProductCalcIn):
         wt = max(p["_wt"], key=lambda w: p["_ml"]["proba"].get(w, 0))
         comps, total = [], Decimal(res["cost"])
         for ckind, cbasis in COMPANIONS[kind]:
-            ranked, _ = pick(idx, wt, ckind, [], {}, "capital", req.region_id)
+            ranked, _ = pick(idx, wt, ckind, [], {}, "capital", req.region_id, must=COMPANION_MUST.get(ckind))
             if not ranked:
                 continue
-            q = ranked[0][1]
             b = area if cbasis == "area" else (perimeter or (area ** 0.5 * 4 if area else 1)) if cbasis == "perimeter" else 1
-            n = compute(ckind, b, q["_attrs"], q, ctx)
-            cost = money(Decimal(str(n.qty)) * money(q.get("result_price") or 0))
+            cost, _, q, _, n = choose(ranked, ckind, b, ctx, "capital")
             total += cost
             comps.append({"product": product_brief(q), "kind": ckind, "qty": n.qty, "unit": q.get("unit"),
                           "formula": n.formula, "cost": str(cost)})
@@ -247,6 +257,9 @@ def admin_suggest(product: dict = Body(..., examples=[{"name": "Клей для 
                                                        "description": "Для бассейнов и душевых"}])):
     from .catalog import attributes, product_text
     p = {"id": -1, "characteristics": [], **product}
+    if isinstance(p.get("category"), str) and not p.get("categories_tree"):
+        p["categories_tree"] = [{"id": i, "name": n.strip(), "depth": i + 1}
+                                for i, n in enumerate(p.pop("category").split("/")) if n.strip()]
     p["_attrs"], p["_text"] = attributes(p), product_text(p)
     idx = get_index()
     Yp, P, kinds, kconf, E = idx.predict([p])
@@ -263,6 +276,20 @@ def admin_suggest(product: dict = Body(..., examples=[{"name": "Клей для 
     }
 
 
+@app.get("/api/v1/admin/sample-new", tags=["admin"], summary="Случайный товар из отложенной выборки (не видела модель)")
+def admin_sample_new():
+    import random
+
+    from .mock_stand import _data
+    items = [p for p in _data()[0] if p["id"] not in get_index().catalog.products]
+    if not items:
+        raise HTTPException(404, "отложенная выборка пуста")
+    p = random.choice(items)
+    return {"name": p["name"], "description": p.get("description", ""),
+            "category": " / ".join(c["name"] for c in p.get("categories_tree") or []),
+            "characteristics": p.get("characteristics", [])}
+
+
 @app.get("/api/v1/admin/products", tags=["admin"], summary="Каталог с ML-разметкой и фильтрами")
 def admin_products(q: str = "", work_type: str = "", kind: str = "", source: str = "",
                    low_conf: bool = False, page: int = 1, per_page: int = Query(30, le=200)):
@@ -277,10 +304,18 @@ def admin_products(q: str = "", work_type: str = "", kind: str = "", source: str
     if source:
         items = [p for p in items if p["_source"] == source]
     if low_conf:
-        items = [p for p in items if not p["_wt"] or max(p["_ml"]["proba"].values()) < 0.6]
+        items = [p for p in items if uncertain(p, idx)]
     total = len(items)
     items = items[(page - 1) * per_page: page * per_page]
     return {"total": total, "page": page, "items": [idx.describe(p) for p in items]}
+
+
+def uncertain(p, idx) -> bool:
+    """Нужна проверка человеком: вероятность какого-то вида работ близка к порогу (с любой стороны)."""
+    if p.get("_source") == "manual":
+        return False
+    th = dict(zip(idx.classes, idx.matcher.thresholds))
+    return any(0.6 * th[w] <= pr < 1.3 * th[w] for w, pr in p["_ml"]["proba"].items() if w in th)
 
 
 @app.post("/api/v1/admin/products/{pid}/bind", tags=["admin"], summary="Ручная привязка товара (приоритет над ML)")
@@ -322,7 +357,7 @@ def admin_sync(base_url: str = Body(..., embed=True, examples=["http://localhost
     t_fetch = time.perf_counter() - t
     out = get_index().ingest(products) if products else []
     return {"fetched": len(products), "fetch_s": round(t_fetch, 2), "total_s": round(time.perf_counter() - t, 2),
-            "log": log[-20:], "items": out[:50]}
+            "log": log[-20:], "items": sorted(out, key=lambda i: not i["work_types"])[:50]}
 
 
 @app.get("/api/v1/admin/stats", tags=["admin"], summary="Покрытие авторазметкой и производительность")
@@ -330,7 +365,7 @@ def admin_stats():
     idx = get_index()
     prods = list(idx.catalog)
     auto = [p for p in prods if p["_source"] == "ml" and p["_wt"]]
-    low = [p for p in prods if not p["_wt"] or max(p["_ml"]["proba"].values()) < 0.6]
+    low = [p for p in prods if uncertain(p, idx)]
     by_wt = {w: 0 for w in idx.classes}
     for p in prods:
         for w in p["_wt"]:

@@ -25,3 +25,15 @@ run:
 	.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 all: data train eval test
+
+real-data:        ## реальный каталог Максидома из data/real/raw -> data/real
+	$(PY) -m scripts.build_real_catalog
+
+eval-real:        ## оценка на реальном каталоге -> reports/metrics_real.md (~1 ч)
+	$(PY) -m eval.evaluate --folds 3 --no-ablation
+
+screenshots:      ## скриншоты UI для презентации (сервис должен быть запущен)
+	PLAYWRIGHT_BROWSERS_PATH=.venv/pw $(PY) scripts/screenshots.py
+
+slides:           ## презентация docs/RepairCalc.pptx из актуальных метрик
+	$(PY) -m scripts.make_presentation

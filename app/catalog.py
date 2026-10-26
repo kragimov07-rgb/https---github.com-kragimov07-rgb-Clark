@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .config import CATALOG_PATH
 
-NUM = r"(\d+(?:[.,]\d+)?)"
+NUM = r"((?:\d+(?:[.,]\d+)?)|(?:(?<!\d)[.,]\d+))"  # «2,5», «10», «.9» (так бывает в каталоге)
 
 
 def to_float(s) -> float | None:
@@ -14,7 +14,7 @@ def to_float(s) -> float | None:
     if isinstance(s, (int, float)):
         return float(s)
     m = re.search(NUM, str(s))
-    return float(m.group(1).replace(",", ".")) if m else None
+    return float("0" + m.group(1).replace(",", ".") if m.group(1)[0] in ".," else m.group(1).replace(",", ".")) if m else None
 
 
 def char_map(p: dict) -> dict[str, str]:
@@ -140,7 +140,8 @@ def attributes(p: dict) -> dict:
     a["wear_class"] = to_float(ch.get("Износостойкость") or ch.get("Класс износостойкости"))
 
     vol = to_float(ch.get("Литраж банки") or ch.get("Объем") or ch.get("Объём"))
-    a["volume_l"] = vol if vol and vol <= 60 else _find(r"л\b", low_name)
+    name_vol = _find(r"л\b", low_name)  # литраж в названии надёжнее характеристик
+    a["volume_l"] = name_vol or (vol if vol and vol <= 60 else None)
     w = _find(r"кг", low_name)
     if w is None:
         g = _find(r"г\b", low_name)
@@ -170,6 +171,10 @@ def attributes(p: dict) -> dict:
     a["cable_pack_m"] = to_float(ch.get("Метраж упаковки"))
     L, W = _len_m(ch.get("Длина")), _len_m(ch.get("Ширина"))
     a["sheet_area_m2"] = round(L * W, 3) if L and W and L * W > 0.3 else None
+    if a["sheet_area_m2"] is None:  # размеры листа только в названии: «1500х1000мм»
+        m = re.search(r"(\d{3,4})\s*[xх×]\s*(\d{3,4})(?:\s*[xх×]\s*\d+[,.]?\d*)?\s*мм", low_name)
+        if m and int(m.group(1)) * int(m.group(2)) / 1e6 > 0.3:
+            a["sheet_area_m2"] = round(int(m.group(1)) * int(m.group(2)) / 1e6, 3)
     a["pack_qty"] = to_float(ch.get("Количество в упаковке")) or _find(r"шт", low_name)
     return a
 

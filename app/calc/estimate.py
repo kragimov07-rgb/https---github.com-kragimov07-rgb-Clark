@@ -9,6 +9,7 @@ from .formulas import compute
 from .plan import Room, plan_room, room_profile
 
 CENT = Decimal("0.01")
+OVERPAY_PENALTY = {"cosmetic": 0.2, "capital": 0.12, "designer": 0.08}  # дизайнерский ремонт допускает переплату
 OBJECT_COEF = {"apartment": 1.0, "studio": 1.0, "house": 1.0}
 
 
@@ -23,18 +24,24 @@ def product_brief(p: dict) -> dict:
             "rating": (p.get("ratings") or {}).get("rating"), "source": p.get("_source")}
 
 
-def line_for(index, slot, repair, region_id, prof, alternatives=2):
-    ranked, warns = pick(index, slot.work_type, slot.kind, slot.prefer, slot.require, repair, region_id, prof)
-    if not ranked:
-        return None, [f"в каталоге нет товаров для «{slot.title}» ({slot.work_type}/{slot.kind})"]
-    # оптимизация фасовки: среди близких по рангу товаров берём минимальную итоговую стоимость
-    top = ranked[0][0]
-    close = [r for r in ranked[:6] if r[0] >= top - 0.08]
+def choose(ranked, kind, basis, ctx, repair):
+    """Выбор товара с учётом итоговой стоимости позиции (фасовка, расход): качество минус штраф за переплату.
+    -> (стоимость, скор, товар, составляющие скора, Need)"""
     costed = []
-    for s, q, parts_q in close:
-        n = compute(slot.kind, slot.basis, q["_attrs"], q, slot.ctx)
+    for s, q, parts_q in ranked[:80]:
+        n = compute(kind, basis, q["_attrs"], q, ctx)
         costed.append((money(Decimal(str(n.qty)) * money(q.get("result_price") or 0)), s, q, parts_q, n))
-    cost, score, p, parts, need = min(costed, key=lambda x: (x[0], -x[1]))
+    min_cost = max(min(float(c[0]) for c in costed), 1.0)
+    overpay = OVERPAY_PENALTY.get(repair, 0.12)
+    return max(costed, key=lambda x: x[1] - overpay * min(float(x[0]) / min_cost - 1, 10))
+
+
+def line_for(index, slot, repair, region_id, prof, alternatives=2):
+    ranked, warns = pick(index, slot.work_type, slot.kind, slot.prefer, slot.require, repair, region_id, prof,
+                         slot.must, slot.optional)
+    if not ranked:
+        return None, [] if slot.optional else [f"в каталоге нет товаров для «{slot.title}» ({slot.work_type}/{slot.kind})"]
+    cost, score, p, parts, need = choose(ranked, slot.kind, slot.basis, slot.ctx, repair)
     if p is not ranked[0][1]:
         ranked = [r for r in ranked if r[1] is p] + [r for r in ranked if r[1] is not p]
     price = money(p.get("result_price") or 0)
@@ -64,6 +71,9 @@ def estimate(index, object_type: str, repair_type: str, rooms: list[dict], regio
     result_rooms, total, by_wt, warnings = [], Decimal(0), {}, []
     tools: dict[int, dict] = {}
     for i, r in enumerate(rooms):
+        r = dict(r)
+        if not r.get("area") and r.get("length") and r.get("width"):
+            r["area"] = r["length"] * r["width"]
         room = Room(**r)
         prof = room_profile(room, tx_rooms)
         lines = []

@@ -24,6 +24,7 @@
 | iniconfig | 2.3.1 | MIT |  |
 | Jinja2 | 3.1.6 | BSD-3-Clause |  |
 | joblib | 1.6.0 | BSD-3-Clause |  |
+| lxml | 6.1.3 | BSD-3-Clause |  |
 | MarkupSafe | 3.0.4 | BSD-3-Clause |  |
 | mpmath | 1.3.0 | BSD |  |
 | networkx | 3.6.1 | BSD-3-Clause |  |
@@ -39,6 +40,7 @@
 | pytest | 8.3.4 | MIT License |  |
 | python-dateutil | 2.9.0.post0 | BSD License; Apache Software License |  |
 | python-dotenv | 1.2.4 | BSD-3-Clause |  |
+| python-pptx | 1.0.2 | MIT License |  |
 | pytz | 2026.5 | MIT License |  |
 | PyYAML | 6.0.2 | MIT |  |
 | regex | 2026.9.29 | Apache-2.0 |  |
@@ -63,3 +65,4 @@
 | uvloop | 0.23.0 | Apache Software License; MIT License |  |
 | watchfiles | 1.3.0 | MIT License |  |
 | websockets | 17.2 | BSD-3-Clause |  |
+| xlsxwriter | 3.2.9 | BSD License |  |

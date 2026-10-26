@@ -9,6 +9,7 @@ hybrid:   1) логрегрессия OvR на TF-IDF (слова + символ
              которых не было в обучении.
           Итог — взвешенная смесь; пороги подбираются по каждому виду работ на out-of-fold.
 """
+import os
 import warnings
 
 import joblib
@@ -23,6 +24,7 @@ from sklearn.multiclass import OneVsRestClassifier
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn.multiclass")
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
+N_JOBS = int(os.getenv("RC_NJOBS", "4"))  # процессов для one-vs-rest: больше -> риск свопа на 16 ГБ
 THRESH_GRID = np.round(np.arange(0.15, 0.81, 0.05), 2)
 WORD_TOKENS = r"(?u)\b[^\W\d_]{2,}\b"  # только слова, без артикулов и чисел
 
@@ -76,7 +78,7 @@ class WorkTypeMatcher:
             self.v_char.fit(texts)
         X = self._features(texts, E, Z)
         self.clf = OneVsRestClassifier(LogisticRegression(C=8.0 if self.mode == "hybrid" else 10.0, max_iter=1000,
-                                                          class_weight="balanced", solver="liblinear"), n_jobs=-1)
+                                                          class_weight="balanced", solver="liblinear"), n_jobs=N_JOBS)
         self.clf.fit(X, Y)
         self.use_emb = self.mode == "hybrid" and E is not None
         self.E_train, self.Y_train = (E, Y) if self.use_emb else (None, None)
@@ -136,7 +138,9 @@ class WorkTypeMatcher:
         if kinds is not None:
             pos = np.where(Y.sum(1) > 0)[0]  # класс материала нужен только ремонтным товарам
             Xk = self._features([texts[i] for i in pos], None if E is None else E[pos], None if Z is None else Z[pos])
-            self.kind_clf = LogisticRegression(C=10.0, max_iter=500).fit(Xk, [kinds[i] for i in pos])
+            # one-vs-rest liblinear параллельно по классам: в разы быстрее мультиклассового lbfgs на 30k+ товаров
+            self.kind_clf = OneVsRestClassifier(LogisticRegression(C=10.0, solver="liblinear", max_iter=1000),
+                                                n_jobs=N_JOBS).fit(Xk, [kinds[i] for i in pos])
         return self
 
     def _tune(self, texts, Y, E, Z):

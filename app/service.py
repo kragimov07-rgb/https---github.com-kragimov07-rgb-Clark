@@ -31,6 +31,8 @@ def suitable_rooms(attrs: dict, work_types: list[str]) -> list[str]:
         out.add("balcony")
     if not attrs.get("moisture_resistant") and not attrs.get("washable"):
         out.add("kids")
+    if {"tiling", "waterproofing", "plumbing", "ventilation", "sealing"} & set(work_types):
+        out |= {"bathroom", "toilet", "kitchen"}
     if "waterproofing" in work_types:
         out -= {"living", "bedroom", "hallway", "kids"}
     return sorted(out)
@@ -46,7 +48,7 @@ class Index:
         self.classes = self.matcher.classes
         self.bindings = self._load_bindings()
         self.stats = {}
-        self.annotate(list(self.catalog))
+        self.annotate(list(self.catalog), use_cache=catalog is None and matcher is None)
 
     # ---------- модель ----------
     def _load_or_train(self) -> WorkTypeMatcher:
@@ -71,11 +73,34 @@ class Index:
         Yp, P, kinds, kconf = self.matcher.predict_all(texts, E, Z)
         return Yp, P, kinds, kconf, E
 
-    def annotate(self, products: list[dict]):
+    @staticmethod
+    def _signature() -> str:
+        """Каталог и модель не менялись -> разметку можно взять из кэша."""
+        parts = [f"{f.stat().st_size}:{int(f.stat().st_mtime)}" for f in (CATALOG_PATH, MODEL_PATH) if f.exists()]
+        return "|".join(parts)
+
+    def _cached_predict(self, products):
+        """Разметка всего каталога с кэшем на диске (models/<набор>/annotations.npz)."""
+        cache = MODEL_DIR / "annotations.npz"
+        sig = self._signature()
+        ids = np.array([int(p["id"]) for p in products])
+        if cache.exists():
+            z = np.load(cache, allow_pickle=False)
+            if str(z["sig"]) == sig and np.array_equal(z["ids"], ids):
+                from .ml.features import ml_text
+                E = self.embedder.encode([ml_text(p) for p in products])
+                return z["Yp"].astype(int), z["P"].astype(np.float32), list(z["kinds"]), z["kconf"], E
+        Yp, P, kinds, kconf, E = self.predict(products)
+        MODEL_DIR.mkdir(parents=True, exist_ok=True)
+        np.savez(cache, sig=np.array(sig), ids=ids, Yp=Yp.astype(np.int8), P=P.astype(np.float16),
+                 kinds=np.array(kinds), kconf=np.asarray(kconf, dtype=np.float32))
+        return Yp, P, kinds, kconf, E
+
+    def annotate(self, products: list[dict], use_cache: bool = False):
         t0 = time.perf_counter()
         if not products:
             return
-        Yp, P, kinds, kconf, E = self.predict(products)
+        Yp, P, kinds, kconf, E = self._cached_predict(products) if use_cache else self.predict(products)
         for i, p in enumerate(products):
             p["_ml"] = {
                 "work_types": [self.classes[c] for c in np.where(Yp[i])[0]],

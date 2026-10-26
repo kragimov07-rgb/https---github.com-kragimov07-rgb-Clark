@@ -58,9 +58,11 @@
   <div class="grid2">
     <div class="panel">
       <h2>Новый товар → ML-подсказка</h2>
-      <label class="field">Название<input id="sName" value="Клей для мозаики и стеклянной плитки белый 5 кг"></label>
-      <label class="field">Описание<textarea id="sDesc" rows="2">Для бассейнов, душевых и кухонных фартуков</textarea></label>
-      <button id="sBtn">Предложить категорию и помещения</button>
+      <label class="field">Название<input id="sName" value="клей плиточный для мозаики и стеклянной плитки белый 5кг"></label>
+      <label class="field">Категория каталога<input id="sCat" value="Плитка / Клей, затирки для плитки и камня"></label>
+      <label class="field">Описание и характеристики<textarea id="sDesc" rows="3">Применение: для бассейнов, душевых и кухонных фартуков; Тип основы: цемент; Вес: 5</textarea></label>
+      <div class="row wrap"><button id="sBtn">Предложить виды работ и помещения</button>
+        <button id="sRand" class="ghost">Взять реальный товар, которого модель не видела</button></div>
       <div id="sOut"></div>
     </div>
     <div class="panel">

@@ -87,3 +87,40 @@ def test_attributes_parsing():
     assert a["washable"] and a["volume_l"] == 2.7
     _, a = prod("Шпаклёвка финишная 20 кг", {"Расход": "1 кг/м² при толщине слоя 1 мм"})
     assert a["weight_kg"] == 20 and a["consumption"]["per_mm"] == 1.0
+
+
+# ---------- разбор реальных характеристик каталога Максидома ----------
+
+def test_real_catalog_number_formats():
+    _, a = prod("краска акриловая HUSKY для детских комнат 0,9л база А", {"Литраж банки": ".9", "Объем": "0.9"})
+    assert a["volume_l"] == 0.9
+    _, a = prod("клей обойный МЕТИЛАН Флизелин 200г", {"Вес": "200", "Расход": "36"})
+    assert a["weight_kg"] == 0.2
+    _, a = prod("клей обойный KLEO EXTRA флизелиновый готовый", {"Вес": "5000"})
+    assert a["weight_kg"] == 5.0
+    _, a = prod("клей плиточный", {"Расход": "2,1-5,2"})
+    assert a["consumption"]["value"] == pytest.approx(3.65)
+
+
+def test_real_catalog_negation_and_units():
+    _, a = prod("обои бумажные дуплекс 10,05х0,53м", {"Влагостойкость обоев": "не влагостойкие", "Ширина": "0,53",
+                                                    "Длина": "10.05", "Раппорт": "53"})
+    assert not a["moisture_resistant"]
+    assert a["roll_width_m"] == 0.53 and a["roll_length_m"] == 10.05 and a["rapport_m"] == 0.53
+    _, a = prod("гипсокартон влагостойкий KNAUF 2500х1200х12,5мм", {"Влагостойкость": "Да", "Длина": "2500", "Ширина": "1200"})
+    assert a["moisture_resistant"] and a["sheet_area_m2"] == 3.0
+    _, a = prod("плинтус ПВХ 2200х55х22мм", {"Длина": "2200"})
+    assert a["length_m"] == 2.2
+
+
+def test_real_consumption_conversions():
+    # гидроизоляция: «1200» в карточке — это г/м²
+    p, a = prod("мастика гидроизоляционная 7кг", {"Расход материала": "1200", "Вес": "7"})
+    need = compute("waterproofing_mix", 10, a, p, {})
+    assert need.qty == 4  # 10 м² × 1,2 кг × 2 слоя = 24 кг / 7 кг -> 4
+    # обойный клей: «Расход 36» — площадь оклейки на пачку
+    p, a = prod("клей обойный 200г", {"Расход": "36", "Вес": "200"})
+    assert compute("wallpaper_glue", 70, a, p, {}).qty == 2
+    # кабель бухтами: длина бухты из названия
+    p, a = prod("кабель ВВГп-нг 3х2,5 20м", {})
+    assert compute("cable", 4, a, p, {}).qty == 2  # 38 м / 20 м

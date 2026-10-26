@@ -125,7 +125,7 @@ async function openProduct(id) {
   $("#pcard").innerHTML = `<div class="panel card">
     <div><h2>${esc(p.name)}</h2>
       <div class="price">${rub(p.result_price)} <span class="muted">/ ${esc(p.unit)}</span></div>
-      ${p.package_area ? `<div class="muted">${p.quantity_in_package} шт в упаковке · ${p.package_area} м² · ${rub(p.price_per_m2)}/м²</div>` : ""}
+      ${p.package_area ? `<div class="muted">${p.quantity_in_package ? p.quantity_in_package + " шт в упаковке · " : ""}${p.package_area} м² в упаковке · ${rub(p.price_per_m2)}/м²</div>` : ""}
       <h3>ML-разметка ${a.source === "manual" ? '<span class="chip manual">ручная</span>' : '<span class="chip ml">автоматическая</span>'}</h3>
       <div>${a.work_types.map(w => `<span class="chip ml">${esc(w.name)} ${w.proba != null ? (w.proba * 100).toFixed(0) + "%" : ""}</span>`).join("") || "—"}</div>
       <div class="muted" style="margin-top:6px">Класс материала: <b>${esc(a.kind)}</b> · Помещения: ${a.rooms_named.map(esc).join(", ")}</div>
@@ -163,8 +163,8 @@ async function openProduct(id) {
 async function loadAdmin() {
   const s = await api("/api/v1/admin/stats");
   $("#stats").innerHTML = [
-    [s.products, "товаров в каталоге"], [(s.auto_bound_share * 100).toFixed(1) + "%", "привязаны автоматически (ML)"],
-    [s.manual_bound, "ручных привязок"], [s.low_confidence, "низкая уверенность → проверить"],
+    [s.products, "товаров в каталоге"], [(s.auto_bound_share * 100).toFixed(1) + "%", "отнесены ML к ремонтным работам (остальное — сад, быт, мебель)"],
+    [s.manual_bound, "ручных привязок"], [s.low_confidence, "на границе порога → очередь на проверку"],
     [s.timing.last_annotate_ms_per_product + " мс", "разметка одного товара"],
   ].map(([v, l]) => `<div class="stat"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
   if ($("#awt").options.length < 2) META.work_types.forEach(w => $("#awt").add(new Option(w.name, w.id)));
@@ -197,8 +197,14 @@ async function editBinding(tr) {
   };
   const reset = $(".reset", cell); if (reset) reset.onclick = async () => { await api(`/api/v1/admin/products/${id}/bind`, undefined, "DELETE"); loadAdmin(); };
 }
+$("#sRand").onclick = async () => {
+  const p = await api("/api/v1/admin/sample-new");
+  $("#sName").value = p.name; $("#sCat").value = p.category;
+  $("#sDesc").value = [p.description, ...(p.characteristics || []).map(c => `${c.name}: ${c.value}`)].filter(Boolean).join("; ").slice(0, 800);
+  $("#sBtn").click();
+};
 $("#sBtn").onclick = async () => {
-  const r = await api("/api/v1/admin/suggest", { name: $("#sName").value, description: $("#sDesc").value });
+  const r = await api("/api/v1/admin/suggest", { name: $("#sName").value, description: $("#sDesc").value, category: $("#sCat").value });
   $("#sOut").innerHTML = `<h3>ML предлагает</h3>
     <div>${r.work_types.map(w => `<span class="chip ml">${esc(w.name)} ${(w.proba * 100).toFixed(0)}%</span>`).join("") || '<span class="muted">не относится к ремонту</span>'}</div>
     <div class="muted" style="margin:6px 0">Класс материала: <b>${esc(r.kind)}</b> (${(r.kind_conf * 100).toFixed(0)}%) · Помещения: ${r.rooms.map(x => esc(x.name)).join(", ")}</div>
@@ -222,7 +228,9 @@ $("#syncBtn").onclick = async () => {
 async function loadQuality() {
   let m;
   try { m = await api("/api/v1/admin/metrics"); } catch (e) { $("#quality").innerHTML = `<div class="warn">${esc(e.message)}</div>`; return; }
-  const names = { random_5fold: "5-fold, случайное разбиение", group_5fold_unseen_subtypes: "5-fold, незнакомые подтипы товаров", new_products: "новые товары (отдельная выгрузка)" };
+  const real = m.dataset.name === "real";
+  const grp = real ? "незнакомые категории каталога" : "незнакомые подтипы товаров";
+  const names = { random_5fold: `${m.dataset.folds || 5}-fold, случайное разбиение`, group_5fold_unseen_subtypes: `${m.dataset.folds || 5}-fold, ${grp}`, new_products: "новые товары (отложенная выборка)" };
   const f = v => v == null ? "—" : v.toFixed(3);
   const cls = v => v >= 0.8 ? "good" : "bad";
   let rows = "";
@@ -231,13 +239,13 @@ async function loadQuality() {
       rows += `<tr><td>${mode}</td><td>${names[p]}</td><td class="num ${cls(r.micro_f1)}">${f(r.micro_f1)}</td><td class="num">${f(r.macro_f1)}</td><td class="num">${f(r["ndcg@10"])}</td><td class="num">${f(r.map)}</td><td class="num">${f(r.out_of_scope_correct)}</td><td class="num">${f(r.multi_label_micro_f1)}</td></tr>`;
   const h = m.results.hybrid;
   $("#quality").innerHTML = `<h2>Качество ML-матчинга «товар → виды работ»</h2>
-    <p class="muted">Каталог: ${m.dataset.products} товаров, ${m.dataset.work_types} видов работ, ${m.dataset.multi_label_products} товаров с несколькими видами работ, ${m.dataset.out_of_scope_products} — вне ремонта. Цель: micro-F1 ≥ 0,8.</p>
+    <p class="muted">${real ? "Реальный каталог Максидома" : "Синтетический каталог"}: ${m.dataset.products.toLocaleString("ru-RU")} товаров, ${m.dataset.work_types} видов работ, ${m.dataset.multi_label_products.toLocaleString("ru-RU")} товаров с несколькими видами работ, ${m.dataset.out_of_scope_products.toLocaleString("ru-RU")} — вне ремонта. Цель: micro-F1 ≥ 0,8.</p>
     <div class="tablewrap"><table><tr><th>Модель</th><th>Протокол</th><th class="num">micro-F1</th><th class="num">macro-F1</th><th class="num">nDCG@10</th><th class="num">MAP</th><th class="num">вне ремонта</th><th class="num">multi-label F1</th></tr>${rows}</table></div>
-    <h3>Абляция (незнакомые подтипы)</h3>
-    <table><tr><th>Вариант</th><th class="num">micro-F1</th><th class="num">macro-F1</th><th class="num">nDCG@10</th></tr>
+    ${Object.keys(m.ablation_group).length ? `<h3>Абляция (${grp})</h3>` : ""}
+    ${Object.keys(m.ablation_group).length ? `<table><tr><th>Вариант</th><th class="num">micro-F1</th><th class="num">macro-F1</th><th class="num">nDCG@10</th></tr>` : "<table>"}
     ${Object.entries(m.ablation_group).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${f(v.micro_f1)}</td><td class="num">${f(v.macro_f1)}</td><td class="num">${f(v["ndcg@10"])}</td></tr>`).join("")}</table>
     <h3>F1 по видам работ (hybrid)</h3>
-    <div class="tablewrap"><table><tr><th>Вид работ</th><th class="num">товаров</th><th class="num">случайное</th><th class="num">незнакомые подтипы</th><th class="num">новые товары</th></tr>
+    <div class="tablewrap"><table><tr><th>Вид работ</th><th class="num">товаров</th><th class="num">случайное</th><th class="num">${grp}</th><th class="num">новые товары</th></tr>
     ${m.classes.map((c, i) => `<tr><td>${esc(wtName(c))}</td><td class="num">${h.random_5fold.support[i]}</td><td class="num">${f(h.random_5fold.per_class_f1[i])}</td><td class="num">${f(h.group_5fold_unseen_subtypes.per_class_f1[i])}</td><td class="num">${f(h.new_products.per_class_f1[i])}</td></tr>`).join("")}</table></div>
     <h3>Производительность</h3>
     <div class="muted">hybrid: обучение ${h.timing.train_s} с, инференс ${h.timing.predict_ms_per_product} мс/товар; эмбеддинги каталога ${m.resources.embed_time_s_all_products} с; пиковая память ${m.resources.peak_rss_mb} МБ; ${esc(m.resources.hardware)}</div>`;
@@ -247,7 +255,7 @@ async function loadQuality() {
 (async () => {
   META = await api("/api/v1/meta");
   const h = await api("/health");
-  $("#health").textContent = `${h.products} товаров · модель ${h.model} · эмбеддинги ${h.embeddings ? "✓" : "✗"} · LLM ${h.llm ? "✓" : "выкл"}`;
+  $("#health").textContent = `${h.dataset === "real" ? "каталог Максидома" : "синтетический каталог"} · ${h.products.toLocaleString("ru-RU")} товаров · модель ${h.model} · эмбеддинги ${h.embeddings ? "✓" : "✗"} · LLM ${h.llm ? "✓" : "выкл"}`;
   addRoom({ type: "bathroom", area: 6, humidity: "high" });
   addRoom({ type: "kitchen", length: 3, width: 4 });
   searchProducts();

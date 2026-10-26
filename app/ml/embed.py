@@ -34,6 +34,8 @@ class Embedder:
             try:
                 from sentence_transformers import SentenceTransformer
                 self._model = SentenceTransformer(self.model_name)
+                # 128 токенов: название, категория и ключевые характеристики; хвост описаний учитывает TF-IDF
+                self._model.max_seq_length = 128
             except Exception as e:  # модель не скачана / нет библиотеки — работаем на TF-IDF
                 log.warning("Embedder unavailable: %s", e)
                 self.available = False
@@ -58,7 +60,7 @@ class Embedder:
                 return None
             text_of = dict(zip(keys, texts))
             vecs = model.encode([f"query: {text_of[k]}" for k in missing], batch_size=batch_size,
-                                normalize_embeddings=True, show_progress_bar=len(missing) > 5000).astype(np.float32)
+                                normalize_embeddings=True, show_progress_bar=False).astype(np.float32)
             start = len(self._index)
             for i, k in enumerate(missing):
                 self._index[k] = start + i
